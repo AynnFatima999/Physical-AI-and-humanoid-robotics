@@ -30,6 +30,7 @@ const config: Config = {
       'classic',
       {
         docs: {
+          path: './docs',
           sidebarPath: './sidebars.ts',
           editUrl:
             'https://github.com/facebook/docusaurus/tree/main/packages/create-docusaurus/templates/shared/',
