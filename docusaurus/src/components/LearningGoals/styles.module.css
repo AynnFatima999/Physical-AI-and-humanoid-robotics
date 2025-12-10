@@ -1,0 +1,18 @@
+.learningGoalsContainer {
+  background-color: #dff0bf;
+  border-left: 4px solid #5fcf79;
+  padding: 1rem;
+  margin: 1rem 0;
+  border-radius: 0 0.5rem 0.5rem 0;
+}
+
+.learningGoalsContainer h3 {
+  margin-top: 0;
+  color: #14361c;
+  font-size: 1.1rem;
+}
+
+.learningGoalsContainer ul {
+  margin-bottom: 0;
+  padding-left: 1.5rem;
+}
