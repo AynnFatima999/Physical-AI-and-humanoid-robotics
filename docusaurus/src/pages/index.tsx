@@ -226,8 +226,8 @@ const Footer = () => {
           </div>
           <div className={styles.footerLinks}>
             <Link to="/docs/intro">Documentation</Link>
-            <Link to="/docs/tutorial-basics/create-a-document">Tutorials</Link>
-            <Link to="/docs/tutorial-extras/manage-docs-versions">Resources</Link>
+            <Link to="/docs/module-1/">Modules</Link>
+            <Link to="/docs/intro">Resources</Link>
           </div>
           <div className={styles.footerSocial}>
             <Link to="#" className={styles.socialLink}>GitHub</Link>
@@ -363,29 +363,29 @@ const StylishFooter = () => {
             <h4 className={styles.sectionHeading}>Resources</h4>
             <ul className={styles.footerLinksList}>
               <li><Link to="/docs/intro" className={styles.footerLink}>Documentation</Link></li>
-              <li><Link to="/docs/tutorial-basics/create-a-document" className={styles.footerLink}>Tutorials</Link></li>
-              <li><Link to="/docs/tutorial-extras/manage-docs-versions" className={styles.footerLink}>Guides</Link></li>
-              <li><Link to="/blog" className={styles.footerLink}>Blog</Link></li>
+              <li><Link to="/docs/module-1/" className={styles.footerLink}>Tutorials</Link></li>
+              <li><Link to="/docs/intro" className={styles.footerLink}>Guides</Link></li>
+              <li><Link to="/docs/intro" className={styles.footerLink}>Blog</Link></li>
             </ul>
           </div>
 
           <div className={styles.footerSection}>
             <h4 className={styles.sectionHeading}>Company</h4>
             <ul className={styles.footerLinksList}>
-              <li><Link to="/about" className={styles.footerLink}>About</Link></li>
-              <li><Link to="/team" className={styles.footerLink}>Team</Link></li>
-              <li><Link to="/careers" className={styles.footerLink}>Careers</Link></li>
-              <li><Link to="/contact" className={styles.footerLink}>Contact</Link></li>
+              <li><Link to="/docs/intro" className={styles.footerLink}>About</Link></li>
+              <li><Link to="/docs/intro" className={styles.footerLink}>Team</Link></li>
+              <li><Link to="/docs/intro" className={styles.footerLink}>Careers</Link></li>
+              <li><Link to="/docs/intro" className={styles.footerLink}>Contact</Link></li>
             </ul>
           </div>
 
           <div className={styles.footerSection}>
             <h4 className={styles.sectionHeading}>Legal</h4>
             <ul className={styles.footerLinksList}>
-              <li><Link to="/privacy" className={styles.footerLink}>Privacy</Link></li>
-              <li><Link to="/terms" className={styles.footerLink}>Terms</Link></li>
-              <li><Link to="/cookies" className={styles.footerLink}>Cookies</Link></li>
-              <li><Link to="/license" className={styles.footerLink}>License</Link></li>
+              <li><Link to="/docs/intro" className={styles.footerLink}>Privacy</Link></li>
+              <li><Link to="/docs/intro" className={styles.footerLink}>Terms</Link></li>
+              <li><Link to="/docs/intro" className={styles.footerLink}>Cookies</Link></li>
+              <li><Link to="/docs/intro" className={styles.footerLink}>License</Link></li>
             </ul>
           </div>
         </div>
