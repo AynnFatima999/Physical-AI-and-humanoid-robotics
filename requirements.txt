@@ -1,0 +1,20 @@
+# Project-level requirements
+# This file includes the core requirements for the project
+# Backend requirements are in backend/requirements.txt
+
+# For development tools and utilities
+pip>=22.0
+setuptools>=65.0
+wheel>=0.38
+
+# Documentation and deployment tools
+mkdocs>=1.4.0
+mkdocstrings>=0.20.0
+
+# Development/testing tools
+pytest>=7.2.0
+pytest-asyncio>=0.20.0
+black>=23.0.0
+flake8>=6.0.0
+mypy>=1.0.0
+pre-commit>=3.0.0

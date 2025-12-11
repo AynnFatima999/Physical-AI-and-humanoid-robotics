@@ -1,0 +1,428 @@
+openapi: 3.0.0
+info:
+  title: AI Book RAG API
+  description: API for Retrieval-Augmented Generation services in the AI-Native Software Development book
+  version: 1.0.0
+servers:
+  - url: https://api.aibook.example.com/v1
+    description: Production server
+  - url: https://staging-api.aibook.example.com/v1
+    description: Staging server
+
+paths:
+  /rag/query:
+    post:
+      summary: Query the RAG system
+      description: Submit a query to the RAG system and receive a response with cited sources
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/QueryRequest'
+      responses:
+        '200':
+          description: Query response with cited sources
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/QueryResponse'
+        '400':
+          description: Invalid query
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /rag/search:
+    post:
+      summary: Search book content
+      description: Perform semantic search on book content
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SearchRequest'
+      responses:
+        '200':
+          description: Search results
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SearchResponse'
+        '400':
+          description: Invalid search parameters
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /rag/documents:
+    post:
+      summary: Index a document
+      description: Add a document to the RAG system for retrieval
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/IndexDocumentRequest'
+      responses:
+        '201':
+          description: Document indexed successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DocumentIndexResponse'
+        '400':
+          description: Invalid document
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /rag/documents/{documentId}:
+    delete:
+      summary: Remove a document
+      description: Remove a document from the RAG system
+      parameters:
+        - name: documentId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '204':
+          description: Document removed successfully
+        '404':
+          description: Document not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /rag/sessions:
+    post:
+      summary: Create a new session
+      description: Create a new user session for tracking conversation context
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateSessionRequest'
+      responses:
+        '201':
+          description: Session created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SessionResponse'
+        '400':
+          description: Invalid session parameters
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+components:
+  schemas:
+    QueryRequest:
+      type: object
+      required:
+        - query
+      properties:
+        query:
+          type: string
+          description: The user's query
+          minLength: 3
+          maxLength: 1000
+        sessionId:
+          type: string
+          format: uuid
+          description: Optional session ID for context
+        userId:
+          type: string
+          format: uuid
+          description: Optional user ID for personalization
+        maxResults:
+          type: integer
+          description: Maximum number of results to return
+          minimum: 1
+          maximum: 10
+          default: 5
+        temperature:
+          type: number
+          description: Temperature for response generation
+          minimum: 0
+          maximum: 1
+          default: 0.7
+
+    QueryResponse:
+      type: object
+      required:
+        - id
+        - query
+        - response
+        - sources
+        - confidence
+        - createdAt
+      properties:
+        id:
+          type: string
+          format: uuid
+        query:
+          type: string
+        response:
+          type: string
+        sources:
+          type: array
+          items:
+            $ref: '#/components/schemas/SourceReference'
+        confidence:
+          type: number
+          format: float
+          minimum: 0
+          maximum: 1
+        responseTime:
+          type: number
+          description: Response time in milliseconds
+        createdAt:
+          type: string
+          format: date-time
+
+    SearchRequest:
+      type: object
+      required:
+        - query
+      properties:
+        query:
+          type: string
+          description: The search query
+          minLength: 3
+          maxLength: 500
+        filters:
+          type: object
+          description: Optional filters for search
+          properties:
+            moduleId:
+              type: string
+              format: uuid
+            chapterId:
+              type: string
+              format: uuid
+            contentTypes:
+              type: array
+              items:
+                type: string
+                enum: [text, code, diagram, exercise, summary]
+        maxResults:
+          type: integer
+          description: Maximum number of results to return
+          minimum: 1
+          maximum: 20
+          default: 10
+        minScore:
+          type: number
+          description: Minimum similarity score (0.0-1.0)
+          minimum: 0
+          maximum: 1
+          default: 0.5
+
+    SearchResponse:
+      type: object
+      required:
+        - results
+        - total
+      properties:
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/SearchResult'
+        total:
+          type: integer
+        query:
+          type: string
+        executionTime:
+          type: number
+          description: Search execution time in milliseconds
+
+    IndexDocumentRequest:
+      type: object
+      required:
+        - content
+        - metadata
+      properties:
+        content:
+          type: string
+          description: The document content to index
+          minLength: 10
+        metadata:
+          type: object
+          description: Metadata for the document
+          required:
+            - title
+            - sourceId
+            - sourceType
+          properties:
+            title:
+              type: string
+            sourceId:
+              type: string
+              format: uuid
+            sourceType:
+              type: string
+              enum: [book, module, chapter, section]
+            tags:
+              type: array
+              items:
+                type: string
+            author:
+              type: string
+            createdAt:
+              type: string
+              format: date-time
+        chunkSize:
+          type: integer
+          description: Size of text chunks for indexing
+          minimum: 100
+          maximum: 1000
+          default: 500
+        overlap:
+          type: integer
+          description: Overlap between chunks
+          minimum: 0
+          maximum: 200
+          default: 50
+
+    DocumentIndexResponse:
+      type: object
+      required:
+        - documentId
+        - chunksIndexed
+        - status
+      properties:
+        documentId:
+          type: string
+          format: uuid
+        chunksIndexed:
+          type: integer
+        status:
+          type: string
+          enum: [success, partial, failed]
+        message:
+          type: string
+
+    SourceReference:
+      type: object
+      required:
+        - id
+        - title
+        - content
+        - sourceType
+        - confidence
+      properties:
+        id:
+          type: string
+          format: uuid
+        title:
+          type: string
+        content:
+          type: string
+        sourceType:
+          type: string
+          enum: [book, module, chapter, section]
+        sourceId:
+          type: string
+          format: uuid
+        page:
+          type: integer
+        confidence:
+          type: number
+          format: float
+          minimum: 0
+          maximum: 1
+        snippet:
+          type: string
+          description: Context snippet around the cited content
+
+    SearchResult:
+      type: object
+      required:
+        - id
+        - title
+        - content
+        - sourceType
+        - score
+      properties:
+        id:
+          type: string
+          format: uuid
+        title:
+          type: string
+        content:
+          type: string
+        sourceType:
+          type: string
+          enum: [book, module, chapter, section]
+        sourceId:
+          type: string
+          format: uuid
+        score:
+          type: number
+          format: float
+          minimum: 0
+          maximum: 1
+        snippet:
+          type: string
+          description: Context snippet around the search result
+
+    CreateSessionRequest:
+      type: object
+      properties:
+        userId:
+          type: string
+          format: uuid
+          description: Optional user ID
+        metadata:
+          type: object
+          description: Additional session metadata
+
+    SessionResponse:
+      type: object
+      required:
+        - sessionId
+        - createdAt
+      properties:
+        sessionId:
+          type: string
+          format: uuid
+        userId:
+          type: string
+          format: uuid
+        createdAt:
+          type: string
+          format: date-time
+        metadata:
+          type: object
+
+    Error:
+      type: object
+      required:
+        - code
+        - message
+      properties:
+        code:
+          type: string
+        message:
+          type: string
+        details:
+          type: object
